@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.17;
 
-contract FlashLoanContract {
+pragma solidity  ^0.8.17;
+
+contract defi {
 
     constructor() {
         primaryOwner = msg.sender;
@@ -13,6 +14,7 @@ contract FlashLoanContract {
     uint public interestRate;
     uint public fundAmount;
     
+
     mapping(address => FundOwner) public fundOwners;
     uint256 public ownerCount;
 
@@ -62,7 +64,7 @@ contract FlashLoanContract {
         uint256 lastPaymentDate;
         uint lastPaymentAmount;
         bool isActive;
-        mapping(uint256 => Loan) public loans;
+        mapping(uint => Loan) loans;
         uint256 loanCount;
         //- No practical way to check if account already exists in mapping
         bool exists;
@@ -95,6 +97,7 @@ contract FlashLoanContract {
         Account storage account = accounts[msg.sender];
         uint interest = (amount * interestRate) / 100;
         if (!account.exists) {
+            account.key = msg.sender;
             account.exists = true;
             account.isActive = true;
             account.balance = amount + interest;
@@ -107,7 +110,7 @@ contract FlashLoanContract {
             account.loanCount++;
         }
 
-        Loan storage newLoan = account.loans[block.timestamp];
+        Loan storage newLoan = account.loans[account.loanCount];
         newLoan.amount = amount;
         newLoan.interestRate = interestRate;
         newLoan.balance = amount + interest;
@@ -123,7 +126,10 @@ contract FlashLoanContract {
         require(loan.balance > 0, "Loan is already paid off");
         require(amount <= loan.balance, "Cannot pay more than the loan balance");
 
-        loan.balance = loan.balance -= amount;
+        loan.balance -= amount;
+        account.balance -= amount;
+        account.lastPaymentDate = block.timestamp;
+        account.lastPaymentAmount = amount;
 
         emit PaymentMade(msg.sender, loanId, amount);
     }
@@ -134,4 +140,3 @@ contract FlashLoanContract {
     }
 
 }
-
