@@ -51,6 +51,24 @@ st.markdown(f"**Number of Accounts**: {contract.functions.accountCount().call()}
 
 # Accounts
 network_accounts = w3.eth.accounts
-st.selectbox("Network Accounts", options=network_accounts)
+accountId = st.selectbox("Select a Network Address", options=network_accounts)
+
+st.write(accountId)
+
+if st.button('Is address a customer?'):
+    account_data = contract.functions.accounts(accountId).call()
+    st.markdown(f"**Addresss**: {account_data[0]}")
+    st.markdown(f"**Balance**: {account_data[1]}")
+    st.markdown(f"**Last Payment Date**: {account_data[2]}")
+    st.markdown(f"**Last Payment Amount**: {account_data[3]}")
+    st.markdown(f"**Is Active**: {account_data[4]}")
+    st.markdown(f"**Loan Count**: {account_data[5]}")
+
+if st.button('Is address an owner?'):
+    owner_data = contract.functions.fundOwners(accountId).call()
+    st.markdown(f"**Addresss**: {owner_data[0]}")
+    st.markdown(f"**Balance**: {owner_data[1]}")
+    st.markdown(f"**Is Active**: {owner_data[2]}")
+
 
 
