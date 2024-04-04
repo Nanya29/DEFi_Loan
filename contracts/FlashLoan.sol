@@ -22,3 +22,38 @@ contract FlashLoanContract {
         require(balanceAfter >= balanceBefore, "Flash loan repayment failed");
     }
 }
+
+
+// still testing
+
+// Created an ERC2020 token
+
+contract MyToken is ERC20 {
+    constructor(uint256 initialSupply) ERC20("MyToken","MTK") {
+        _mint(msg.sender, initialSupply);
+    }
+}
+
+// start of the flashLoan
+
+contract flashLoans  {
+
+    MyToken public token;
+
+    constructor(address tokenAddress) {
+        token = MyToken(tokenAddress);
+    }
+
+    function executeFlashLoans(uint256 amount) external {
+        
+        // We will just transfer the tokens back to the contract
+        token.transferFrom(msg.sender, address(this), amount);
+
+        // Perform arbitrage logic here.
+
+        // repay the loan
+        token.transfer(msg.sender, amount);
+
+        // emit an event to signal completion of the flash laon
+    }
+}
