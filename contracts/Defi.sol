@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import {IDex} from "./DEX.sol";
+import {IDex} from "./FlashLoan.sol";
 
 library FlashLoanLib {
     event FlashLoanProcessed(address borrower, uint256 profit);
@@ -178,7 +178,7 @@ contract DeFi {
         emit FundDeposit(msg.sender, msg.value);
     }
 
-    function getLoan(uint amount) public payable canIssueLoan {
+    function getLoan(uint amount) public payable canGetLoan {
         Account storage account = accounts[msg.sender];
         uint interest = (amount * interestRate) / 100;
         if (!account.exists) {
