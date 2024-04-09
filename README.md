@@ -12,6 +12,7 @@ The project leverages various technologies including:
 - Python
 - Streamlit
 - Web3
+- FlashLoanLib
 
 ## Summary
 
