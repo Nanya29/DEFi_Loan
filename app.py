@@ -4,6 +4,7 @@ from web3 import Web3
 from pathlib import Path
 from dotenv import load_dotenv
 import streamlit as st
+from datetime import datetime
 #from streamlit_extras.app_logo import add_logo
 
 load_dotenv()
@@ -20,6 +21,8 @@ contract_address = os.getenv("SMART_CONTRACT_ADDRESS")
 def load_contract():
 
     # Load Art Gallery ABI
+    with abi_path.open() as f:
+        certificate_abi = json.load(f)    
     with abi_path.open() as f:
         certificate_abi = json.load(f)    
 
@@ -43,6 +46,9 @@ contract = load_contract()
 
 st.markdown(f"**Lending Pool Amount in Wei**: {contract.functions.fundAmount().call()}")
 
+st.markdown(f"**Current Gas Price**: {w3.eth.gas_price}")
+
+
 st.markdown(f"**Contract Primary Owner**: {contract.functions.primaryOwner.address}")
 st.markdown(f"**Contract Address**: {contract.functions.address}")
 
@@ -56,11 +62,39 @@ accountId = st.selectbox("Select a Network Address", options=network_accounts)
 
 st.write(accountId)
 
+ether_amount = st.number_input('Enter amount of Ether for loan:', min_value=0.0)
+
+if st.button('Get Account Balance'):
+    balance = w3.to_wei(contract.functions.accounts(accountId).call()[1], 'ether')
+    st.write(f"Balance for {accountId}: {balance}")
+
+if st.button('Get Loan'):
+    wei_amount = w3.to_wei(ether_amount, 'ether')
+    try:
+        nonce = w3.eth.get_transaction_count(accountId)
+        gas_estimate = w3.eth.estimate_gas(
+            {"to": contract_address, "from": accountId, "value": wei_amount}
+        )
+        txn_dict = {
+            'from': accountId,
+            'value': wei_amount,
+            'gas': gas_estimate,
+            'gasPrice': w3.eth.gas_price,
+            'nonce': nonce,
+        }
+        tx = contract.functions.getLoan(wei_amount).build_transaction(txn_dict)
+        signed_tx = w3.eth.account.sign_transaction(tx, os.getenv(accountId))
+        tx_receipt = w3.eth.send_raw_transaction(signed_tx.raw_transaction)
+        st.write(tx_receipt)
+
+    except Exception as e:
+        st.error(f"Error calling getLoan: {e}")
+
 if st.button('Is address a customer?'):
     account_data = contract.functions.accounts(accountId).call()
     st.markdown(f"**Addresss**: {account_data[0]}")
     st.markdown(f"**Balance**: {account_data[1]}")
-    st.markdown(f"**Last Payment Date**: {account_data[2]}")
+    st.markdown(f"**Last Payment Date**: {datetime.fromtimestamp(account_data[2]).strftime('%Y-%m-%d %H:%M:%S')}")
     st.markdown(f"**Last Payment Amount**: {account_data[3]}")
     st.markdown(f"**Is Active**: {account_data[4]}")
     st.markdown(f"**Loan Count**: {account_data[5]}")
@@ -70,8 +104,6 @@ if st.button('Is address an owner?'):
     st.markdown(f"**Addresss**: {owner_data[0]}")
     st.markdown(f"**Balance**: {owner_data[1]}")
     st.markdown(f"**Is Active**: {owner_data[2]}")
-
-
 
 # Subject to change after loan is disbursed
 st.sidebar.markdown("## Account Balance")
