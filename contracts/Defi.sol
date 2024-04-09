@@ -178,7 +178,7 @@ contract DeFi {
         emit FundDeposit(msg.sender, msg.value);
     }
 
-    function getLoan(uint amount) public payable canGetLoan {
+    function getLoan(uint amount) public payable canIssueLoan {
         Account storage account = accounts[msg.sender];
         uint interest = (amount * interestRate) / 100;
         if (!account.exists) {
