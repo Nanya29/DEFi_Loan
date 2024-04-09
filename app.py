@@ -4,37 +4,46 @@ from web3 import Web3
 from pathlib import Path
 from dotenv import load_dotenv
 import streamlit as st
+from streamlit_extras.app_logo import add_logo
 
 load_dotenv()
 
 # Define and connect a new Web3 provider
 w3 = Web3(Web3.HTTPProvider(os.getenv("WEB3_PROVIDER_URI")))
-
+abi_path = Path('./contracts/compiled/certificate_abi.json')
+contract_address = os.getenv("SMART_CONTRACT_ADDRESS")
 ################################################################################
 # Contract Helper function:
 # 1. Loads the contract once using cache
 # 2. Connects to the contract using the contract address and ABI
 ################################################################################
 
+# Stream Lit Application
+
+
 # Cache the contract on load
-@st.cache(allow_output_mutation=True)
+@st.cache_resource()
 # Define the load_contract function
 def load_contract():
 
     # Load Art Gallery ABI
-    with open(Path('./contracts/compiled/certificate_abi.json')) as f:
-        certificate_abi = json.load(f)
-
-    # Set the contract address (this is the address of the deployed contract)
-    contract_address = os.getenv("SMART_CONTRACT_ADDRESS")
+    with abi_path.open() as f:
+        certificate_abi = json.load(f)    
 
     # Get the contract
     contract = w3.eth.contract(
         address=contract_address,
         abi=certificate_abi
     )
+     # Set the contract address (this is the address of the deployed contract)
+
     # Return the contract from the function
     return contract
+   
+    
+
+# Write welcome messgae
+st.markdown("# LOAN SUMMARY")
 
 
 # Load the contract
@@ -72,3 +81,26 @@ if st.button('Is address an owner?'):
 
 
 
+# Subject to change after loan is disbursed
+st.sidebar.markdown("## Account Balance")
+#st.write(Account.balance)
+
+# Create an input field to record the loan amount
+loan_amt = st.sidebar.number_input("Loan Amount")
+
+# Create an input field to record the fee amount
+fee_amt = loan_amt * 0.03
+st.sidebar.markdown("Fee Amount")
+st.sidebar.write(fee_amt)
+
+#create an input field for repay Amount
+st.sidebar.markdown("## Total Amount Due ")
+repay_amt= loan_amt+ fee_amt
+st.sidebar.write("Due Amount", repay_amt)
+
+
+#create Deposit button
+if st.sidebar.button("makeDeposit"):
+    Transacton= makeDeposit(FundDepposit(msg.value, msg.sender))
+    st.balloons()
+ConnectionAbortedError
