@@ -4,7 +4,7 @@ from web3 import Web3
 from pathlib import Path
 from dotenv import load_dotenv
 import streamlit as st
-from streamlit_extras.app_logo import add_logo
+#from streamlit_extras.app_logo import add_logo
 
 load_dotenv()
 
@@ -12,13 +12,6 @@ load_dotenv()
 w3 = Web3(Web3.HTTPProvider(os.getenv("WEB3_PROVIDER_URI")))
 abi_path = Path('./contracts/compiled/certificate_abi.json')
 contract_address = os.getenv("SMART_CONTRACT_ADDRESS")
-################################################################################
-# Contract Helper function:
-# 1. Loads the contract once using cache
-# 2. Connects to the contract using the contract address and ABI
-################################################################################
-
-# Stream Lit Application
 
 
 # Cache the contract on load
@@ -35,7 +28,6 @@ def load_contract():
         address=contract_address,
         abi=certificate_abi
     )
-     # Set the contract address (this is the address of the deployed contract)
 
     # Return the contract from the function
     return contract
@@ -101,6 +93,7 @@ st.sidebar.write("Due Amount", repay_amt)
 
 #create Deposit button
 if st.sidebar.button("makeDeposit"):
-    Transacton= makeDeposit(FundDepposit(msg.value, msg.sender))
+    # Transacton = contract.functions.makeDeposit(msg.value, msg.sender)
     st.balloons()
-ConnectionAbortedError
+    
+# ConnectionAbortedError
