@@ -22,6 +22,12 @@ Continuing our exploration of blockchain and smart contracts with Solidity, we'v
 
 This project serves as an illustration of how smart contracts can facilitate transactions in the decentralized finance landscape.
 
+## Challenges
+
+- Versioning
+- Simulating a production environment
+- Streamlined testing & updates
+
 ## Next Steps
 
 Transition to a Sepolia testnet and import a commercial-grade contract to further enhance the capabilities and robustness of the contract and trading features.
