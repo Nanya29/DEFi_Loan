@@ -42,8 +42,7 @@ network_accounts = w3.eth.accounts
 with tab1:
     st.markdown("# Account View")
     st.divider()
-    Account_list= ("0x13defbfBd9a110e13B35e1f6596819244A129012", "0x2F77D271ce43ad0ADdE0992450fE73734e11169E")
-    accountId = st.selectbox("Select a Account", Account_list)
+    accountId = st.selectbox("Select a Account", network_accounts)
 
     st.markdown(f"**Account Selected**: {accountId}")
 

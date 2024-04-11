@@ -27,6 +27,8 @@ This project serves as an illustration of how smart contracts can facilitate tra
 - Versioning
 - Simulating a production environment
 - Streamlined testing & updates
+- Connecting actions with status
+- Formatting issues
 
 ## Next Steps
 
